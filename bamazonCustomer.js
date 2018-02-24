@@ -88,6 +88,9 @@ function queryCustomerSelection(shoppersAnswer, quantity) {
       console.log("\n"+res[i].item_id + " \t| " +res[i].product_name + "  \t|" + res[i].department_name + " \t| " + res[i].price + " \t| "  + res[i].stock_quantity);
          if(quantity>res[i]){
           console.log("We have the amount you are asking for in stock!")
+              var newQuantity=res[i].stock_quantity-quantity;
+            updateProduct(res[i].item_id, newQuantity,res[i].product_name);
+              queryAllProducts();
          }
          else{
           console.log("Insufficient Quantity!");
@@ -96,6 +99,30 @@ function queryCustomerSelection(shoppersAnswer, quantity) {
 
 
   });
+
+  // logs the actual query being run
+  console.log(query.sql);
+}
+
+
+function updateProduct(id, newQuantity, product) {
+  console.log("Updating" + product+ " quantities...\n");
+  var query = connection.query(
+    "UPDATE products SET ? WHERE ?",
+    [
+      {
+        stock_quantity: newQuantity
+      },
+      {
+        item_id: id
+      }
+    ],
+    function(err, res) {
+      console.log(res.affectedRows + " products updated!\n");
+      // Call deleteProduct AFTER the UPDATE completes
+      deleteProduct();
+    }
+  );
 
   // logs the actual query being run
   console.log(query.sql);
