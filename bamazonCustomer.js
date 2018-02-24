@@ -68,7 +68,7 @@ inquirer
   .then(function(inquirerResponse) {
     // If the inquirerResponse confirms, we displays the inquirerResponse's username and pokemon from the answers.
     if (inquirerResponse.confirm) {
-      console.log("\nRetrieving ID:  " + inquirerResponse.shoppersAnswer + " \tQuantity: " + inquirerResponse.quantity+ "\n");
+   //   console.log("\nRetrieving ID:  " + inquirerResponse.shoppersAnswer + " \tQuantity: " + inquirerResponse.quantity+ "\n");
     
     queryCustomerSelection(inquirerResponse.shoppersAnswer,inquirerResponse.quantity);
     
@@ -82,18 +82,25 @@ inquirer
 
 
 function queryCustomerSelection(shoppersAnswer, quantity) {
-
+var total=0;
   var query = connection.query("SELECT * FROM products WHERE item_id=?", [shoppersAnswer], function(err, res) {
+    
     for (var i = 0; i < res.length; i++) {
-      console.log("\n"+res[i].item_id + " \t| " +res[i].product_name + "  \t|" + res[i].department_name + " \t| " + res[i].price + " \t| "  + res[i].stock_quantity);
-         if(quantity>res[i]){
-          console.log("We have the amount you are asking for in stock!")
+         if(quantity<res[i].stock_quantity){
+          console.log("\nWe have the amount you are asking for in stock!")
+
+          console.log("\nID\tProduct\t\tDept.\t\tPrice\tStock Quantity\n"+res[i].item_id + " \t| " +res[i].product_name + "  \t|" + res[i].department_name + " \t| " + res[i].price + " \t| "  + res[i].stock_quantity);
+      
               var newQuantity=res[i].stock_quantity-quantity;
+               total+=res[i].price *quantity;
+            console.log("\nRetrieving " +  res[i].product_name+ " at quantity: " + quantity+ ".\t Your total cost is : " + total);
             updateProduct(res[i].item_id, newQuantity,res[i].product_name);
+           
               queryAllProducts();
          }
          else{
-          console.log("Insufficient Quantity!");
+          console.log("Insufficient Quantity!\nPlease choose another item:\n");
+          start();
          }
     }
 
@@ -101,12 +108,12 @@ function queryCustomerSelection(shoppersAnswer, quantity) {
   });
 
   // logs the actual query being run
-  console.log(query.sql);
+ // console.log(query.sql);
 }
 
 
 function updateProduct(id, newQuantity, product) {
-  console.log("Updating" + product+ " quantities...\n");
+  console.log("\n\nUpdating " + product+ " quantities...");
   var query = connection.query(
     "UPDATE products SET ? WHERE ?",
     [
@@ -120,10 +127,10 @@ function updateProduct(id, newQuantity, product) {
     function(err, res) {
       console.log(res.affectedRows + " products updated!\n");
       // Call deleteProduct AFTER the UPDATE completes
-      deleteProduct();
+      //deleteProduct();
     }
   );
 
   // logs the actual query being run
-  console.log(query.sql);
+ // console.log(query.sql);
 }
