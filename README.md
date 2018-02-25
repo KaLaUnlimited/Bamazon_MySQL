@@ -6,5 +6,5 @@ Video demonstrating the application:
 https://drive.google.com/file/d/1Wm85jbwPI3-K9p_GJujXzqRppBTaZlJ-/view
 
 <video width="320" height="240" controls>
-  <source src="sqlVid.webm" type="video/mp4">
+  <source src="sqlVid.webm" type="video/webm">
 </video>
